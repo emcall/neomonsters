@@ -1,0 +1,56 @@
+<?php include("layout/header.txt"); ?>
+Viewing your NeoMonsters
+<br><table>
+<?php
+	
+	//connect to database
+	$link = connecttodb();
+
+	//start form for changing rank
+	echo "<form action='/process_changerank.phtml' method='post'>";
+
+	//array to hold the pet data
+	$pets = array();
+	$i = 0;
+	//fetch pet data
+	$query = "SELECT *
+			FROM pets
+			WHERE owner = '$uid'
+			ORDER BY rank;";
+	$q_result = mysqli_query($link, $query) or die("ERROR: GETPETS: Could not access database " . mysqli_error($link));
+	//put data into array
+	while($line = mysqli_fetch_array($q_result, MYSQLI_ASSOC)){
+		$pets[$i] = $line;
+		$i++;
+		}
+			
+	//make table for displaying pets
+	//x is for displaying in columns
+	echo "<table><tr>\n";
+	$x = 0;
+		
+	//run through array and display all pets
+	foreach($pets as $value){
+		$petname = $value['name'];
+		$species = $value['species'];
+		$color = $value['color'];
+		$alt = $value['alt'];
+		
+		if($x >= 4){
+			echo "\n</tr><tr>";
+			$x = 0;
+		}
+		$x++;
+		
+		echo "<td>";
+		echo "\n$petname the  $color $species";
+		$petimage = pet_img($link, $species, $color, $alt, happy);
+		echo "\n<a href='/process_activepet.phtml?pet=$petname'><img src=$petimage></a>";
+		echo "</td>";
+		//have 
+	}
+?>
+</tr></table>
+<input type='submit' value='Change Pet Ranks'/></form>
+
+<?php include("layout/footer.txt"); ?>

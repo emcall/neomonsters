@@ -1,0 +1,41 @@
+<title>Register</title>
+
+<form action="process_createaccount.phtml" type="POST">
+
+<b>Username:</b>
+<br/><input type="text" maxlength="20" name="username"/>
+
+<br/>
+
+<b>Password:</b>
+<br/><small>IMPORTANT: don't use a password you've used anywhere before, ever, this site isn't super secure!</small>
+<br/><input type="password" name="pass1" />
+<br/>And again:
+<br/><input type="password" name="pass2" />
+
+<b>Email Address:</b>
+<br/><input type="text" name="email" />
+
+<br/>
+
+<b>Display Name</b>
+<br/><input type="text" name="realname" />
+
+<b>Gender:</b>
+<select name="gender">
+	<option value="male">Male</option>
+	<option value="female">Female</option>
+	<option value="other">Other</option>
+	<option value="undisclosed">Undisclosed</option>
+</select>
+
+<br/>
+
+Prove you're legitimate! 
+<br><input type="text" name="verify"/>
+
+<br/>
+
+<input type="submit"/>
+
+</form>

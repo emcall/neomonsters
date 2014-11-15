@@ -1,0 +1,10 @@
+﻿<?php include("layout/header.txt");
+        
+        //connect to database
+        $link = connecttodb();
+
+
+        
+        
+        include("layout/footer.txt");
+?>

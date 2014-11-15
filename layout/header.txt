@@ -1,0 +1,76 @@
+﻿<?php
+session_start()?>
+<html>
+<head>
+                <title>NeoMonsters!</title>
+                <link href='/layout.css' type='text/css' rel='stylesheet'>
+</head>
+<body>
+<?php
+        
+        //this will connect to the mysql database. all other mysql functions assume this has been called already, and accept the value $link as the database connection.
+        function connecttodb(){
+                $link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+                if (mysqli_connect_errno($link)) {
+                        echo "Failed to connect to MySQL: " . mysqli_connect_error();
+                }
+                return $link;
+        }
+        
+        //this function handles pet images
+        //the exact URL changes based on the value of "alt"
+        function pet_img($link, $species, $color, $alt, $pose){
+                //people aren't interested in multiple poses right now, so we'll only be handling happy and circle.
+                
+                //if alt is set to 0, that means the image is hosted on Neopets' server.
+                if($alt == 0){
+                        if($pose == 'circle'){
+                                $imgurl = "http://images.neopets.com/pets/" . $species . "_" . $color . "_baby.gif";                                
+                        }
+                        else{
+                                $imgurl = "http://images.neopets.com/pets/happy/" . $species . "_" . $color . "_baby.gif";
+                        }
+                }
+                //otherwise, it is hosted on our own server.
+                else{
+                                $imgurl = "/images/pets/" . $species . "_" . $color . "_baby";
+                                if($alt > 1){
+                                        $imgurl .= "_" . $alt;
+                                }
+                                $imgurl .= ".gif";
+                }
+                return $imgurl;
+        }
+
+
+        
+        
+        
+                //this is where an actual nice layout goes. eventually.
+                include("templayout.html");
+                
+                
+        //if they're logged in, get the username.
+        if(isset($_SESSION['loggedin'])){
+                $username = $_SESSION['username'];        
+                $uid = $_SESSION['uid'];
+                echo "<p>Welcome back, $username!</p>
+                <p><a href='/logout.phtml'>Log Out</a> <a href='/createapet.phtml'>Create a Pet</a> <a href='/viewpets.phtml'>View Pets</a></p>\n";
+                
+                
+                
+                
+        }
+        else {
+        //eventually make this nicer
+                echo "<form action='login.php' method='POST'>
+                Username: <br>
+                <input type='text' name='username'><br>
+                Password: <br>
+                <input type='password' name='pass'><br>
+                <input type='submit' name='submit' value='Login'>
+                </form>";
+                die("ERROR: You must be logged in to view page content!");
+        }
+?>
+<br />

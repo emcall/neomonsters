@@ -1,0 +1,73 @@
+<?php
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($link)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	
+	
+	//get input
+	$name = $_POST['name'];
+	$rarity = $_POST['rarity'];
+	$value = $_POST['value'];
+	$description = $_POST['description'];
+	$imgurl = $_POST['imgurl'];
+	$category = $_POST['category'];
+	$theme = $_POST['theme'];
+
+	//check to make sure all values have been filled in
+	//with a gross if statement oops.
+	if($name == NULL || $rarity == NULL || $value == NULL || $description == NULL || $imgurl == NULL || $category == NULL || $theme == NULL){
+		echo "Please fill in all fields, thanks.";
+		die();
+		}
+		
+	//make sure theres nothing gross in the inputs
+	//also could be more efficient i bet but. effort. v.v
+	
+	//an stands for "alphanumeric" btw. If you were wondering.
+	$an_name = trim(preg_replace("[^A-Za-z0-9_.!?,;\s]", "", $name));
+	$an_rarity = trim(preg_replace("[^0-9]", "", $rarity));
+	$an_value = trim(preg_replace("[^0-9]", "", $value));
+	$an_description = trim(preg_replace("[^A-Za-z0-9_.!?,;:\s\w]", "", $description));
+	$an_imgurl = trim(preg_replace("[^A-Za-z0-9_./:&*=!?\s]", "", $imgurl));
+	//did somebody cheat
+	if($an_name != $name){
+		echo "Hey. Yo. what did I say about invalid characters??? $name has problems. YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_name";
+		die();
+		}
+	if($an_rarity != $rarity){
+		echo "Hey. Yo. what did I say about invalid characters??? $rarity has problems. YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_rarity";
+		die();
+		}
+	if($an_imgurl != $imgurl){
+		echo "Hey. Yo. what did I say about invalid characters??? YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_imgurl != $imgurl";
+		die();
+		}
+	if($an_description != $description){
+		echo "Hey. Yo. what did I say about invalid characters??? YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_description , $description";
+		die();
+		}
+	if($an_value != $value ){
+		echo "Hey. Yo. what did I say about invalid characters??? YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_value , $value";
+		die();
+		}
+	
+	
+
+	
+	$request = "INSERT INTO plushies
+		VALUES (
+		'$an_name',
+		'$an_rarity',
+		'$an_value',
+		'$an_description',
+		'$an_imgurl',
+		'$category',
+		'$theme');";
+		
+	
+	$result = mysqli_query($link, $request) or die("Error adding $name: " . mysqli_error($link));
+	
+	echo "Yay you did it. Here's your thing: <img src=$an_umgurl> $an_name, $an_rarity, $an_value, $an_description, $category, $theme";
+	
+?>

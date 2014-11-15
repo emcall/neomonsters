@@ -1,0 +1,9 @@
+[29-Jun-2013 12:37:29] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushtheme.phtml on line 11
+[29-Jun-2013 12:38:32] PHP Parse error:  syntax error, unexpected T_VARIABLE in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushtheme.phtml on line 11
+[29-Jun-2013 12:39:02] PHP Parse error:  syntax error, unexpected ';' in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushtheme.phtml on line 14
+[29-Jun-2013 12:45:45] PHP Parse error:  syntax error, unexpected ';' in /home/soundog/public_html/neomonsters.net/admin/scripts/deleteplushietheme.phtml on line 13
+[29-Jun-2013 12:55:01] PHP Parse error:  syntax error, unexpected $end in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushie.phtml on line 44
+[29-Jun-2013 13:06:36] PHP Warning:  mysqli_query() expects parameter 1 to be mysqli, null given in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushie.phtml on line 63
+[29-Jun-2013 13:06:36] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushie.phtml on line 63
+[29-Jun-2013 13:07:34] PHP Warning:  mysqli_query() expects parameter 1 to be mysqli, null given in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushie.phtml on line 63
+[29-Jun-2013 13:07:34] PHP Warning:  mysqli_error() expects parameter 1 to be mysqli, null given in /home/soundog/public_html/neomonsters.net/admin/scripts/addplushie.phtml on line 63

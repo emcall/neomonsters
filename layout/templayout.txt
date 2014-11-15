@@ -1,0 +1,20 @@
+﻿User is $username now FYI. Main Page
+Log Out
+Inventory
+Create Item
+Create a Pet
+Userlookup
+Edit User Info
+Petlookup
+View your Pets
+Edit Petpage
+Edit Petlookup
+Forum
+Games
+Your Shop
+NPC Shops
+Gallery
+Search
+Admin Panel
+Yo don't forget alts.
+Make the layout secure also.

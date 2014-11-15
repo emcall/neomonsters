@@ -1,0 +1,69 @@
+<?php include("layout/header.txt"); ?>
+<p>Create a pet <br />
+<form action="process_createapet.phtml" method="post">
+<?php
+
+
+	//connect to database
+	$link = connecttodb();
+	
+	$check_nums = "SELECT numpets, maxpets
+	FROM accounts
+	WHERE uid = '$uid';";
+	$check_result = mysqli_query($link, $check_nums) or die("ERROR: CHECKNUMPETS: Could not access database " . mysqli_error($link));
+	$result = mysqli_fetch_array($check_result);
+	$maxpets = $result['maxpets'];
+	$numpets = $result['numpets'];
+	$slotsleft = $maxpets - $numpets;
+	if ($slotsleft < 0){
+		echo("You have too many pets already!");
+		include("layout/footer.txt");
+		die();
+		}
+	
+	//input desired name
+	echo "Name: <input type='text' name='petname'/>";
+	echo "\n <br /><input type='radio' name ='gender' value = 'female'/>Female |";
+	echo "<input type='radio' name='gender' value='male'/>Male |";
+	echo "<input type='radio' name='gender' value='unknown'/>Unknown |";
+	echo "<input type='radio' name='gender' value='undisclosed'/>Undisclosed";
+	
+	//retrieve list of species. 
+	//will need to be edited so as to not include restricted pets.
+	//possibly add a value to species/color "restricted"? have where restricted = 0
+	$select_species = "SELECT s
+			FROM species
+			WHERE r = 0
+			ORDER BY s; 
+			";
+	
+	//retrieve list of colors
+	//will be removed later + changed to red/blue/green/yellow. 
+	//Possibly edited instead, see above.
+	$restriction = 0;
+	$select_color = "SELECT c
+			FROM colors
+			WHERE r = '0'
+			ORDER BY c; 
+			";			
+			
+	//display the list of colors (dropdown box)
+	$select_color_result = mysqli_query($link, $select_color) or die ("FATAL ERROR! Could not retrieve colors" . mysqli_error($link));
+	echo "\n<br />Color:";
+	echo "<select name=\"color\">";
+	while ($line = mysqli_fetch_array($select_color_result, MYSQL_ASSOC)) {
+		echo "<option value='$line[c]'>$line[c]</option>\n";
+		}
+	echo "</select>";
+	
+	//display the list of species (dropdown box)
+	$select_species_result = mysqli_query($link, $select_species) or die ("FATAL ERROR! Could not retrieve species: " . mysqli_error($link));
+	echo "Species:";
+	echo "<select name=\"species\">";
+	while ($line = mysqli_fetch_array($select_species_result, MYSQL_ASSOC)) {
+		echo "<option value='$line[s]'>$line[s]</option>\n";
+	}
+	echo "</select>";
+
+?>
+<input type="submit" /></form>

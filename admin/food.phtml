@@ -1,0 +1,71 @@
+<?php
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($link)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	?>
+
+<title>FOOD - ADMIN PANEL</title>
+
+<script id="_waudtx">var _wau = _wau || []; _wau.push(["classic", "vol081cj9qsh", "dtx"]);
+(function() {var s=document.createElement("script"); s.async=true;
+s.src="http://widgets.amung.us/classic.js";
+document.getElementsByTagName("head")[0].appendChild(s);
+})();</script>
+<br>^yo if there's more than one of you here at once, plz do something about that, cool. Don't want to have ~conflicts~
+
+<br><br>To add an item, please fill out this form.
+<ul>Notes:
+<li/>Name can only contain letters, numbers, and the following characters:
+<li/>Rarity goes from 1 to 99 with 99 being rarest.
+<li/>Value is resale value; around 10,000 for an average item is good.
+<li/>Descriptions can only contain letters, numbers, and the following characters:
+<li/>Theme is used for grouping items of a set, like "spooky food" etc. <a href="themes.phtml">Add new themes here.</a>
+</ul>
+
+<form action="scripts/addfood.phtml" method="post">
+Item Name: <input type="text" name="name" maxlength="32"/>
+Item rarity: <input type="text" name="rarity" maxlength="2"/>
+Item Value: <input type="text" name="value" maxlength="6"/>
+Image URL: <input type='text' name='imgurl'/>
+
+
+Theme:
+
+<select name="theme">
+<?php
+	$request = "SELECT name
+		FROM themes
+		ORDER BY name;";
+	$result = mysqli_query($link, $request) or die("FATAL ERROR: " . mysqli_error($link));
+	while ($line = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+		echo "<option value='$line[name]'>$line[name]</option>\n";
+	}
+
+
+	?>
+</select>
+
+<br><input type="text" name='description' />
+<input type="submit" />
+</form>
+
+<br><br>If you messed up on an item, you can delete it here. Try not to mess up, though.
+<form action="scripts/deletefood.phtml" method="post">
+<select name="name">
+<?php
+	$request = "SELECT name
+		FROM food
+		ORDER BY name;";
+	$result = mysqli_query($link, $request) or die("FATAL ERROR: " . mysqli_error($link));
+	while ($line = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+		echo "<option value='$line[name]'>$line[name]</option>\n";
+	}
+
+
+	?>
+</select>
+<input type="submit" />
+
+
+<br>To view all food presently in the database, <a href='scripts/displayfood.phtml'>click here.</a> Note that it may take some time to load.

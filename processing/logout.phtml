@@ -1,0 +1,14 @@
+<?php
+session_start();?>
+<html>
+<head>
+	<title>Logging Out</title>
+</head>
+<body>
+<?php
+    $_SESSION = array();
+    session_destroy();
+	echo "You have been logged out. Goodbye!";
+?>
+</body>
+</html>

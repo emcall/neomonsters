@@ -1,0 +1,83 @@
+<?php include("layout/header.txt"); 
+	
+	//grab all the values
+	$petname = mysqli_real_escape_string($_POST['petname']);
+	$gender = mysqli_real_escape_string($_POST['gender']);
+	$color = mysqli_real_escape_string($_POST['color']);
+	$species = mysqli_real_escape_string($_POST['species']);
+	
+	//connect to database
+	$link = connecttodb();
+	
+	//check again that they have enough petslots (no being sneaky!!!)
+	
+	$check_nums = "SELECT numpets, maxpets
+	FROM accounts
+	WHERE uid = '$uid';";
+	$check_result = mysqli_query($link, $check_nums) or die("ERROR: CHECKNUMPETS: Could not access database " . mysqli_error($link));
+	$result = mysqli_fetch_array($check_result);
+	$maxpets = $result['maxpets'];
+	$numpets = $result['numpets'];
+	$slotsleft = $maxpets - $numpets;
+	if ($slotsleft < 0){
+		echo("Yo I see what you're trying to do there. No cheating. Get more slots.");
+		include("layout/footer.txt");
+		die();
+		}
+
+	
+	//check if the species/color combination is valid
+	$check_valid_type = "SELECT *
+	FROM types
+	WHERE color = '$color'
+	AND species = '$species';";
+	$check_result = mysqli_query($link, $check_valid_type) or die("ERROR: " . mysqli_error($link));
+	$valid = mysqli_num_rows($check_result);
+	//1+ if valid, 0 if not
+	if ($valid < 1){
+		echo "There's no such thing as a $color $species!";
+		include("layout/footer.txt");
+		die();
+		}
+	
+	//check to see if name contains invalid characters
+	if(preg_match('/[^0-9A-Za-z]/', $petname)){
+		echo "The name you entered contains invalid characters. Names can only have letters, numbers, spaces, and periods.";
+		include("footer.txt");
+		die();
+	}
+	
+	
+	//check if there is a pet with that name already
+	$check_name_taken = "SELECT *
+		FROM pets
+		WHERE name = '$petname';";
+	$check_result = mysqli_query($link, $check_name_taken) or die("ERROR: " . mysqli_error($link));	
+	$nametaken = mysqli_num_rows($check_result);
+	if($nametaken != 0){
+		echo "Sorry, but that name is taken :C";
+		include("layout/footer.txt");
+		die();
+		}
+	
+	//add to database
+	$addpet = "INSERT INTO pets VALUES (
+		'$petname',
+		'$uid',
+		'$species',
+		'$color',
+		 NULL,
+		 0,
+		'$gender');";
+	mysqli_query($link, $addpet) or die("ERROR:ADDPET: " . mysqli_error($link));
+	//add one to user's number of pets
+	$update_numpets = "UPDATE accounts
+	SET numpets = numpets+1
+	WHERE uid = '$uid';";
+	mysqli_query($link, $update_numpets) or die("Could not reach account table" . mysqli_error($link));
+
+	if($success = TRUE){
+		echo "Congratulations! Your new $species, $petname, has been born!";
+		}
+	include("layout/footer.txt");
+?>

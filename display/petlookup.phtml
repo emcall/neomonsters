@@ -1,0 +1,57 @@
+<?php include("layout/header.txt");
+	//get the name of the desired pet
+	$pet = $_GET['pet'];
+	
+	//if pet is blank
+	//TODO put search box in
+	if($pet == NULL){
+		echo "um who are you looking for";
+		include("layout/footer.txt");
+		die();
+	}
+	
+	//header
+	echo "Viewing Pet Profile";
+	
+	//connect to database
+	$link = connecttodb();
+	
+	//fetch data
+	$request = "SELECT *
+		FROM pets
+			WHERE name = '$pet';";
+	$result = mysqli_fetch_array(mysqli_query($link, $request)) or die("FATAL ERROR: " . mysqli_error($link));
+	
+	//put data into variables
+	$dob = date( "M d, Y", strtotime($result['dob'])); 
+	$color = $result['color'];
+	$species = $result['species'];
+	$gender = $result['gender'];
+	$owner = $result['owner'];
+	$alt = $result['alt'];
+	$petimage = pet_img($link, $species, $color, $alt, circle);
+	
+	//print data
+	echo "\n<br><b>$pet the $color $species</b>";	
+	echo "\n<br><img src=$petimage />";
+	echo "\n<br />Born: $dob";
+	echo "\n<br />Gender: $gender";
+	
+	
+	/*update this*/
+	//fetch username from owner id
+	//$ownername = get_namefromuid($link, $owner);
+	//echo "\n<br />Owner: <a href='/userlookup.phtml?user=" . $ownername . "'>$ownername</a>";
+	
+	//fetch custom content
+	$query = "SELECT content
+			FROM petlookups
+			WHERE petname = '$petname';";
+	$result = mysqli_fetch_array(mysqli_query($link, $query)) or die("FATAL ERROR: " . mysqli_error($link));
+
+	$content = $result['content'];
+
+	echo "$content";
+	
+	include("layout/footer.txt");
+?>

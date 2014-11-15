@@ -1,0 +1,30 @@
+<h2>Item Theme</h2>
+Every item is put in a "theme" that makes it part of a larger set. Examples of themes: spooky foods, reject plushies, faerie books, rainbow plushies, etc. The name of the theme should be one word with no spaces or capitals. Themes span all 'collectible' item types, so any theme you make here will become available for all items added in the future. 
+
+
+<br><br>Add new theme:
+<form action="scripts/addtheme.phtml" method="post">
+<input type="text" name="theme" maxlength="32"/>
+<input type="submit" />
+</form>
+
+<br><br><br>If you misspell a theme name, you can delete it. <b>Do NOT delete a theme that has items in it!</b> (if there's a problem just tell me, I can fix it manually)
+
+<form action="scripts/deletetheme.phtml" method="post">
+<select name="plushtheme">
+<?php
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($link)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	
+	$request = "SELECT name
+		FROM themes
+		ORDER BY name;";
+	$result = mysqli_query($link, $request) or die("FATAL ERROR: " . mysqli_error($link));
+	while ($line = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+		echo "<option value='$line[name]'>$line[name]</option>\n";
+	}
+	?>
+</select>
+<input type="submit" /></form>

@@ -1,0 +1,31 @@
+﻿man games would be cool
+
+
+maths nightmare would be super easy.
+what else is super simple.... 
+
+
+some things the internet suggested        
+pure js/php:
+        4x4 tic-tac-toe
+        othello
+        blackjack
+        battleship
+        matching/memory
+        hangman
+
+
+needs an engine to run:        
+        snake
+        dodger (like monkey game)
+        simon
+        sliding puzzle
+        jelly blobs
+        
+        hmm i guess i'd just do these in java...? um yeah i should figure out how to do interactive stuff i guess. im sure its possible, i feel like you dont need flash since you can kind of run whatever...?
+
+
+idk how to save stuff (mysql?) so maybe just have a thing that says "if you leave the page progress will be lost"
+
+
+man doing voltorb flip would be a lot of fun but haaa complicated

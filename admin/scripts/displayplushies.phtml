@@ -1,0 +1,42 @@
+<table><tr>
+					<td>Image</td>
+					<td>Name</td>
+					<td>Rarity</td>
+					<td>Value</td>
+					<td>Category</td>
+					<td>Theme</td></tr>
+
+<?php
+
+		$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+		if (mysqli_connect_errno($link)) {
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+			}
+			
+			$request = "SELECT *
+			FROM plushies;";
+			
+			$result = mysqli_query($link, $request) or die("ERROR: " . mysqli_error($link));
+			
+			
+			//too lazy to rename properly
+			while ($line = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+				$name = $line['name'];
+				$rarity = $line['rarity'];
+				$value = $line['value'];
+				$description = $line['description'];
+				$imgurl = $line['imgurl'];
+				$category = $line['category'];
+				$theme = $line['theme'];
+				
+				
+				echo "<tr>
+						<td><img src=" . $imgurl . ">
+						<td>$name</td>
+						<td>$rarity</td>
+						<td>$value</td>
+						<td>$category</td>
+						<td>$theme</td> </tr>";
+			}
+?>
+</table>

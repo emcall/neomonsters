@@ -1,0 +1,99 @@
+<title>Edit Pet Lookup</title>
+
+<?php include("layout/header.txt");
+
+	$link = connecttodb();
+//okay so.
+	//first we get the pet to edit. if it's null, display user's pets. 
+	$pet = $_GET['pet'];
+	
+	//if no pet has been selected, display all pets
+	if($pet == NULL)
+	{
+		echo "Pick a pet!\n";
+		$pets = array();
+		$i = 0;
+		//fetch pet data
+		$query = "SELECT *
+				FROM pets
+				WHERE owner = '$uid'
+				ORDER BY rank;";
+		$q_result = mysqli_query($link, $query) or die("ERROR: GETPETS: Could not access database " . mysqli_error($link));
+		//put data into array
+		while($line = mysqli_fetch_array($q_result, MYSQLI_ASSOC)){
+			$pets[$i] = $line;
+			$i++;
+			}
+				
+		//make table for displaying pets
+		//x is for displaying in columns
+		echo "<table><tr>\n";
+		$x = 0;
+			
+		//run through array and display all pets
+		foreach($pets as $value){
+			$petname = $value['name'];
+			$species = $value['species'];
+			$color = $value['color'];
+			$alt = $value['alt'];
+			
+			if($x >= 4){
+				echo "\n</tr><tr>";
+				$x = 0;
+			}
+			$x++;
+			
+			echo "<td>";
+			echo "\n$petname the  $color $species";
+			$petimage = pet_img($link, $species, $color, $alt, happy);
+			echo "\n<a href='/editpetlookup.phtml?pet=$petname'><img src=$petimage></a>";
+			echo "</td>";
+		}
+		echo "</tr></table>";
+		include("layout/footer.txt");
+		die();
+	} //end of displaying pets
+	
+	//otherwise, $pet contains the name of the pet to edit.
+	//get data on pet
+	//make sure the user owns it
+	$query = "SELECT *
+			FROM pets
+			WHERE name = '$pet';";
+	$result = mysqli_fetch_array(mysqli_query($link, $query)) or die("FATAL ERROR: " . mysqli_error($link));
+	$owner = $result['owner'];
+	if($owner != $uid){
+		echo "hey this ain't your pet";
+		include("layout/footer.txt");
+		die();
+		}
+	$species = $result['species'];
+	$color = $result['color'];
+	$alt = $result['alt'];
+
+	$petimage = pet_img($link, $species, $color, $alt, happy);
+	echo "\n<img src=$petimage></a>";
+	echo "\n<br>Note that right now I'm not filtering anything except mysql so I'm trusting y'all not to put anything dumb here. If you break my website i will be hells of mad.";
+	//fetch whats in the database already 
+	$getcontent = "SELECT content
+				FROM petlookups
+				WHERE petname = '$pet';";
+	$contentresult = mysqli_fetch_array(mysqli_query($link, $getcontent));
+	$content = $contentresult['content'];
+	//if there's no entry, make one
+	if($content == NULL){
+		$add = "INSERT INTO petlookups VALUES (
+						'$pet',
+						' ',
+						NULL);";
+	
+		mysqli_query($link, $add) or die("FATAL ERROR: " . mysqli_error($link));
+	}
+	
+	//shove it in the textarea
+	echo "<form action='/process_editpage.phtml' method='post'>";
+	echo "\n<textarea name='content'>$content</textarea>";
+	echo "<input type=hidden name='petname' value='$pet' />";
+	echo "\n<input type='submit' /></form>";
+	
+?>

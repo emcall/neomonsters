@@ -1,0 +1,15 @@
+<?php
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($link)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	
+	$name = $_POST['theme'];
+	$an_pt = trim(ereg_replace("[^A-Za-z0-9]", "", $name));
+	$request = "INSERT INTO themes
+	VALUES ('$an_pt');";
+		
+	$result = mysqli_query($link, $request) or die("Error adding $name: " . mysqli_error($link));
+	echo "$an_pt added";
+	
+	?>

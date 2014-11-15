@@ -1,0 +1,25 @@
+<?php
+	//connect to database
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($link)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	
+
+	$petname = $_GET['pet'];
+	
+	//if no pet is specified
+	if($petname == NULL){
+		die("Who are you looking for???");
+	}
+	$query = "SELECT content
+			FROM petpages
+			WHERE petname = '$petname';";
+	$result = mysqli_fetch_array(mysqli_query($link, $query)) or die("It would appear this pet does not have a page." . mysqli_error($link));
+
+	$content = $result['content'];
+	
+	//display content
+	echo "$content";
+	
+	?>

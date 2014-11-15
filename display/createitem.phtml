@@ -1,0 +1,59 @@
+<?php include("layout/header.txt");?>
+
+<title>Admin: Generate New Item</title>
+	Hey, this should only be accessible if you're an admin. I'll make a check in a lil bit.
+	
+	<form action="process_createitem.phtml" method="post">
+
+<?php	
+	//connect to database
+	$link = connecttodb();
+
+	//okay so.
+	//just list the options
+	//all item categories
+		//then make it so it changes the next dropdown
+	//um is that it???
+	
+	echo "<br/>Username: <input type='text' name='user'/>";
+	
+	//paintbrushes
+	$selectp = "SELECT name
+			FROM paintbrush
+			ORDER BY name;";
+	
+	//radio button
+	echo "<br/>Add Paintbrush: <input type='radio' name='itemcat' value='paintbrush'>";
+	
+	//dropdown for paintbrushes
+	$selectp_result = mysqli_query($link, $selectp) or die ("FATAL ERROR: " . mysqli_error($link));
+	echo "<select name='pname'>";
+	while ($line = mysqli_fetch_array($selectp_result, MYSQL_ASSOC)) {
+		$iname = $line['name'];
+		echo "<option value='$iname'>$iname</option>\n";
+		}
+	echo "</select>";
+
+	
+	//morphpot
+	$selectm = "SELECT name
+			FROM morphpot
+			ORDER BY name;";
+	
+	//radio button
+		echo "<br/>Add Morphing Potion: <input type='radio' name='itemcat' value='morphpot'>";
+	
+	//dropdown for morphpot
+	$selectm_result = mysqli_query($link, $selectm) or die ("FATAL ERROR: " . mysqli_error($link));
+	echo "<select name='mname'>";
+	while ($line = mysqli_fetch_array($selectm_result, MYSQL_ASSOC)) {
+		$iname = $line['name'];
+		echo "<option value='$iname'>$iname</option>\n";
+		}
+	echo "</select>";
+
+	echo "<br/><input type='submit' /></form>";
+	
+	
+	include("layout/footer.txt");
+?>

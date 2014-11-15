@@ -1,0 +1,67 @@
+<?php	include("layout/header.txt");?>
+
+Mmh, I don't feel like finishing this at the moment. I need to figure out how to 
+
+This page will let you change the default options for creating a pet.
+<br>If the box is checked, that species or color will be available on the create-a-pet page.
+<form action="process_restrictions.phtml" method="post">
+
+
+<p><b>Colors</b>
+<table>
+
+<?php
+
+	$link = connecttodb();
+	//retrieve colors
+	$select_color = "SELECT c, r
+			FROM colors
+			ORDER BY c; 
+			";			
+	$select_color_result = mysqli_query($link, $select_color) or die ("FATAL ERROR! Could not retrieve colors" . mysqli_error($link));
+	
+	//list all available colors
+	//colcount for table
+	$colcount = 0;
+	while ($line = mysqli_fetch_array($select_color_result, MYSQL_ASSOC)) {
+
+		if($colcount >5){
+			echo "</tr><tr>";
+			$colcount = 0;
+			}
+		echo "<td><input type='checkbox' name='color' value='$line[c]' ";
+		if($line['r'] == 0){
+			echo "checked";
+			}
+		echo "> $line[c] </td>";
+		$colcount++;
+		}
+	
+	//now, same thing for species.
+	$select_species = "SELECT s, restriction
+			FROM species
+			ORDER BY s; 
+			";			
+	$select_species_result = mysqli_query($link, $select_species) or die ("FATAL ERROR! Could not retrieve species" . mysqli_error($link));
+	
+	//colcount for table
+	$colcount = 0;
+	while ($line = mysqli_fetch_array($select_species_result, MYSQL_ASSOC)) {
+
+		if($colcount >5){
+			echo "</tr><tr>";
+			$colcount = 0;
+			}
+		echo "<td><input type='checkbox' name='color' value='$line[s]' ";
+		if($line['restriction'] == 0){
+			echo "checked";
+			}
+		echo "> $line[c] </td>";
+		$colcount++;
+		}
+	
+		
+	
+	?>
+</tr></table>
+	<input type="submit"/></form>

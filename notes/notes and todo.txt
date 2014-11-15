@@ -1,0 +1,21 @@
+﻿september 01
+
+
+things we need
+        friggin logs
+        
+        shops, user/npc
+        
+        dailies
+        
+        accounts table has been modified
+        
+        get activepet to display on every page
+        
+        change pet order
+        
+        make paintbrushes and morphpots actually work
+        
+        change layout so its not .txt
+        
+        forums >:I

@@ -1,0 +1,50 @@
+<?php include("layout/header.txt");
+	
+	//connect to database
+	$link = connecttodb();
+
+	//fetch data (items owned by user)
+	$item_array = array();
+	$request = "SELECT *
+			FROM items
+			WHERE owner = '$uid'
+			AND location = 'inventory';";
+	$result = mysqli_query($link, $request) or die("ERROR: " . mysqli_error($link));
+	while($line = mysqli_fetch_array($result, MYSQLI_ASSOC)){
+		$item_array[$i] = $line;
+		$i++;
+		}
+	
+	/* Display Items in Inventory */
+	//keep track of how many items are in the current row
+	$rowcount = 0;
+	
+	echo "<table>";
+	//traverse array of items
+	foreach($item_array as $item){
+			
+			//retrieve item variables
+			$itemname = $item['name'];
+			$itemcat = $item['category'];
+			$itemid = $item['ID'];
+			
+			//request information from item database
+			//it would be more efficient to do this call beforehand so i only need to do it once per cat
+			//but. effort. maybe later. 
+			$request = "SELECT imgurl
+				FROM $itemcat
+				WHERE name = '$itemname';";
+			$result = mysqli_fetch_array(mysqli_query($link, $request)) or die("foreach " . mysqli_error($link));
+			
+			$imgurl = $result['imgurl'];
+			//ok now display all that information 
+			if($rowcount >= 3){
+				echo "</tr><tr>"; 
+				$rowcount == 0;
+				}
+			echo "<td><a href=/scripts/useitem.phtml?id=" . $itemid . "> <img src=" . $imgurl . " /></a> <br> $itemname </td>";
+			
+		}
+//ok is that it for this file? i think so...?
+	include("layout/footer.txt");
+?>

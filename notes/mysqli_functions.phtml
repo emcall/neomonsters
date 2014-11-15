@@ -1,0 +1,345 @@
+<?php
+
+//this will connect to the mysql database. all other mysql functions assume this has been called already, and accept the value $link as the database connection.
+//this function is called by the header file.
+function connecttodb(){
+	$mysqli = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	if (mysqli_connect_errno($mysqli)) {
+		echo "Failed to connect to MySQL: " . mysqli_connect_error();
+	}
+	return $mysqli;
+}
+
+					/* VALIDATION FUNCTIONS */
+//these functions are used to ensure all data being entered in a mySQL query is clean and won't break everything.
+//these are kind of hacky and temporary; all they do is strip problematic characters. This could be a potential security issue, so be sure to fix this later.
+
+//validate should be called on any string before insertion into a mySQL query
+function validate($string){
+	$safestring = trim(ereg_replace("[^A-Za-z0-9_. ]", "", $string));
+	return $safestring;
+	}
+//array_validate should be called on any array before use in a mySQL query
+function array_validate($var){
+	$safearray = array();
+	while ($current = current($var)){
+		$skey = trim(ereg_replace("[^A-Za-z0-9_. ]", "", key($var)));
+		$scurrent = trim(ereg_replace("[^A-Za-z0-9_. ]", "", $current));
+		$safearray[$skey] = $scurrent;
+		next($var);
+		}
+	return $safearray;
+	}
+
+	
+	
+	
+		/*DATA CHECK FUNCTIONS */
+//these functions access the database to make sure that the data entered is correct. 
+
+
+//check_petslots checks to see how much space the user has for new pets
+//returns the number of open slots.
+function check_petslots($link, $uid){
+	$check_nums = "SELECT numpets, maxpets
+	FROM accounts
+	WHERE uid = '$uid';";
+	$check_result = mysqli_query($link, $check_nums) or die("ERROR: CHECKNUMPETS: Could not access database " . mysqli_error($link));
+	$result = mysqli_fetch_array($check_result, MYSQL_ASSOC);
+	$slotsleft = $result['maxpets'] - $result['numpets'];
+	if ($slotsleft < 0){
+		die("HEY! Somehow you have $slotsleft open pet slots. Clearly something has gone horribly wrong.");
+		}
+	return $slotsleft;
+	}
+
+	
+//check_type checks to see if a certain species/color combination exists
+//if yes, returns 1. if no, returns 0.
+function check_type($link, $q_color, $q_species){
+	$check_valid_type = "SELECT *
+	FROM types
+	WHERE color = '$q_color'
+	AND species = '$q_species';";
+	$check_result = mysqli_query($link, $check_valid_type) or die("ERROR:CHECKTYPE: Could not reach database" . mysqli_error($link));
+	$q_numrows = mysqli_num_rows($check_result);
+	//1 if valid, 0 if not
+	return $q_numrows;
+	}
+	
+	
+//check_login checks to see if the entered username and password is correct
+//if yes, returns an array with user info. If no, returns 0.
+function check_pass($link, $uname, $pass){
+	//this is temporary and will have to be changed when encryption is added
+	$pass = validate($pass);
+	$check_query = "SELECT uid, urank, uname, money 
+	FROM accounts
+	WHERE uname = '$uname'
+	AND pass = '$pass';";
+	$check_result = mysqli_query($link, $check_query) or die("ERROR: CHECKLOGIN: Could not access database " . mysqli_error($link));
+	if (mysqli_num_rows($check_result) < 1){
+		return 0; 
+		}
+	return mysqli_fetch_array($check_result, MYSQLI_ASSOC);
+	}
+
+	
+	/* DATA RETRIEVAL FUNCTIONS */
+//these functions access the database and return the desired information. 
+//these should be called in more complex functions; although they do strip any disallowed characters, they should not be the only line of defense against problematic inputs!
+
+
+//get_namefromuid takes in a user id and returns the user's name
+function get_namefromuid($link, $uid){
+	$uid = validate($uid);
+	$query = "SELECT uname
+		FROM accounts
+		WHERE uid = '$uid';";
+	$result = mysqli_fetch_array(mysqli_query($link, $query), MYSQLI_ASSOC);
+	return $result['uname'];
+	}
+
+//get_uidfromname takes in a user name and returns the user's id
+	
+
+//get_petdata takes in the pet's name and an array of the information desired
+//it returns a keymapped array containing the requested data 
+function get_petdata($link, $q_pkey, $q_info){
+	$q_pkey = validate($q_pkey);
+	$q_info = array_validate($q_info);
+	
+	$query = "SELECT ";
+	while($current =current($q_info)){
+		$query .= "$current";
+		if(next($q_info)){
+			$query .= ", ";
+			}
+		}
+	$query .= " FROM pets
+			WHERE name = '$q_pkey';";
+	$q_result = mysqli_query($link, $query) or die("ERROR:GETDATA: Could not access database. " . mysqli_error($link));
+	if (mysqli_num_rows($q_result) < 1){
+		return 0; 
+		}
+	$petdata = mysqli_fetch_array($q_result, MYSQLI_ASSOC);
+	return $petdata;
+	}
+	
+	
+//takes in the user's ID and an array of the information desired
+//it returns a keymapped array containing the requested data 
+//q_pkey = uid		q_info = array list of requested info
+function get_accountdata($link, $q_pkey, $q_info){
+	$q_pkey = validate($q_pkey);
+	$q_info = array_validate($q_info);
+	
+	$query = "SELECT ";
+	while($current =current($q_info)){
+		$query .= "$current";
+		if(next($q_info)){
+			$query .= ", ";
+			}
+		}
+	$query .= " FROM accounts
+			WHERE uid = '$q_pkey';";
+	$q_result = mysqli_query($link, $query) or die("ERROR:GETDATA: Could not access database. " . mysqli_error($link));
+	$numrows = mysqli_num_rows($q_result);
+	if($numrows < 1){
+		return 0;
+		}
+	$adata = $line = mysqli_fetch_array($q_result, MYSQLI_ASSOC);
+	return $adata;
+	}
+	
+	
+//this function returns an array of all pets owned by a specific account. 
+function get_userpets($link, $uid){
+	//$uid = validate($uid);
+	$pets = array();
+	$i = 0;
+	$query = "SELECT *
+	FROM pets
+	WHERE owner = '$uid'
+	ORDER BY rank;";
+	$q_result = mysqli_query($link, $query) or die("ERROR: GETPETS: Could not access database " . mysqli_error($link));
+	while($line = mysqli_fetch_array($q_result, MYSQLI_ASSOC)){
+		$pets[$i] = $line;
+		$i++;
+		}
+	return $pets;
+	}
+	
+	/* EDIT FUNCTIONS */
+//these functions alter existing entries within the database. Additional data check should be done before running these functions!
+	
+//this function takes in an array of values to change for a specific pet, then updates it in the db
+function edit_pet($link, $q_petname, $q_val){
+	$q_petname = validate($q_petname);
+	$q_val = array_validate($q_val);
+	$edit_query = "UPDATE pets \nSET ";
+	while ($current_val = current($q_val)){
+		$edit_query .= key($q_val) . " = '$current_val'";
+		if(next($q_val)){
+			$edit_query .= ", ";
+			}
+		}
+	$edit_query .= "\n WHERE name = '$q_petname';";
+	mysqli_query($link, $edit_query) or die("ERROR:EDITPET: Could not alter pet $q_petname" . mysqli_error($link));
+	return true;
+	}
+	
+		
+//this function takes in an array of values to change for a specific account, then updates it in the db
+function edit_account($link, $q_uid, $q_val){
+	$q_uid = validate($q_uid);
+	
+	$edit_query = "UPDATE accounts \nSET ";
+	while ($current_val = current($q_val)){
+		$edit_query .= key($q_val) . " = '$current_val'";
+		if(next($q_val)){
+			$edit_query .= ", ";
+			}
+		}
+	$edit_query .= "\n WHERE uid = '$q_uid';";
+	mysqli_query($link, $edit_query) or die("ERROR:EDITACCOUNT: Could not alter account " . mysqli_error($link));
+	return true;
+	}
+	
+//this function takes in an array of values to change for a specific item, then updates it in the db
+function edit_item($link, $q_id, $q_val){
+	$q_id = validate($q_id);
+	$q_val = array_validate($q_val);
+	$edit_query = "UPDATE items \nSET ";
+	while ($current_val = current($q_val)){
+		$edit_query .= key($q_val) . " = '$current_val'";
+		if(next($q_val)){
+			$edit_query .= ", ";
+			}
+		}
+	$edit_query .= "\n WHERE uid = '$q_id';";
+	mysqli_query($link, $edit_query) or die("ERROR:EDITITEM: Could not alter item " . mysqli_error($link));
+		return true;
+	}
+	
+	/* ADD FUNCTIONS */
+//these functions add new things into the database! woah.
+
+//this will add a pet to the pets table. very simple.	
+function add_pet($link, $petname, $ownerid, $species, $color, $rank, $gender) {
+	$petname = validate($petname);
+	$ownerid = validate($ownerid);
+	$species = validate($species);
+	$color = validate($color);
+	$dob = validate($dob);
+	$rank = validate($rank);
+	$gender = validate($gender);
+	$q_addpet = "INSERT INTO pets VALUES (
+	'$petname',
+	'$ownerid',
+	'$species',
+	'$color',
+	 NULL,
+	'$rank',
+	'$gender');";
+	mysqli_query($link, $q_addpet) or die("ERROR:ADDPET: Could not add to database. " . mysqli_error($link));
+	//add one to user's number of pets
+	$update_numpets = "UPDATE accounts
+	SET numpets = numpets+1
+	WHERE uid = '$ownerid';";
+	mysqli_query($link, $update_numpets) or die("Could not reach account table" . mysqli_error($link));
+	return true;
+	}
+
+//this will create a new account.	
+function add_account($link, $urank, $uname, $pass, $joindate, $numpets, $maxpets, $money) {
+	$uname = validate($uname);
+	$pass = validate($pass);
+	$urank = validate($urank);
+	$joindate = validate($joindate);
+	$numpets = validate($numpets);
+	$maxpets = validate($maxpets);
+	$money = validate($money);
+	$q_add = "INSERT INTO accounts VALUES (
+	NULL,
+	'$urank',
+	'$uname',
+	'$pass',
+	'$joindate',
+	'$numpets',
+	'$maxpets',
+	'$money');";
+	mysqli_query($link, $q_add) or die("ERROR:ADDACCOUNT: Could not add to database. " . mysqli_error($link));
+	return true;
+	}
+
+//this will make a new item. wow who would have guessed.
+function add_item($link, $uid, $name, $location, $category) {
+	$uid = validate($uid);
+	$name = validate($name);
+	$location = validate($location);
+	$category = validate($category);
+	$q_add = "INSERT INTO items VALUES (
+	NULL,
+	'$uid',
+	'$name',
+	'$location',
+	'$category');";
+	mysqli_query($link, $q_add) or die("ERROR:ITEM: Could not add to database. " . mysqli_error($link));
+	return true;
+	}
+	
+	/*DELETE FUNCTIONS*/
+//these functions delete things from the database, omg
+
+//this will brutally murder a pet in the database, you heartless bastard.
+function delete_pet($link, $petname){
+	//TODO update owner's petslots
+	$q_delete =	"DELETE FROM pets 
+		WHERE name = '$petname'";
+	mysqli_query($link, $q_delete) or die("ERROR:DELETEPET: Could not remove from database. " . mysqli_error($link));
+	return true;
+	}
+
+//this function will banish a user's soul to the shadow realm. use this power only for good
+function delete_account($link, $id){
+	$q_delete =	"DELETE FROM accounts 
+		WHERE uid = '$id'";
+	mysqli_query($link, $q_delete) or die("ERROR:DELETEACCOUNT: Could not remove from database. " . mysqli_error($link));
+	return true;
+	}
+
+//this function will sacrifice an item to the mysql gods in exchange for a single '1'. was it really worth it
+function delete_item($link, $id){
+	$q_delete =	"DELETE FROM items 
+		WHERE ID = '$id'";
+	mysqli_query($link, $q_delete) or die("ERROR:DELETEITEM: Could not remove from database. " . mysqli_error());
+	return true;
+	}
+
+//		MISC. FUNCTIONS
+//stuff that doesnt belong in any other category
+
+	//log into the website
+function login(){
+	if(isset($_SESSION['loggedin'])){
+		die("You are already logged in!");
+		}
+	$uname = validate($_POST['name']);
+	$pass = $_POST['pass'];
+		//should store name, id, money, rank.
+	//check_login checks to see if password is correct, returns 1 if yes 0 if no
+	$info = check_pass($link, $uname, $pass);
+	if ($info == 0){
+		die("Sorry. You have entered the wrong information. Please try again."); 
+		}
+	$_SESSION['loggedin'] = "YES"; 
+	$_SESSION['uname'] = $uname; 
+	$_SESSION['urank'] = $info['urank'];
+	$_SESSION['uid'] = $info['ID'];
+	$_SESSION['points'] = $info['money'];
+	die("You are now logged in!"); 
+	}	
+	
+	
+?>

@@ -1,0 +1,15 @@
+﻿</div>
+        </td>        </tr>
+        </table>
+        <br><br><small>neopets is copyright some loser</small>
+</body>
+</html>        
+
+
+<?php
+if($link != NULL){
+        mysqli_close($link);
+        }
+?>
+<br /><br/>
+</html>

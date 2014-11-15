@@ -1,0 +1,32 @@
+<?php include("layout/header.txt");
+
+$link = connecttodb();
+
+//get input
+$content = $_POST['content'];
+$petname = $_POST['petname'];
+//echo "$petname, $content";
+
+//escape quotes
+$content = mysqli_real_escape_string($link, $content);
+
+if(strpos($content, 'mysql') != false){
+	die("disallowed word");
+	}
+
+//filter 
+
+//escape quotes etc
+
+//enter into db
+$update = "UPDATE petpages
+	SET content = '$content'
+		WHERE petname = '$petname';";
+
+mysqli_query($link, $update) or die("FATAL ERROR: " . mysqli_error($link));
+
+echo "Cool, you updated $petname's page.";
+echo"\n<a href='editpetpage.phtml?pet=$petname'>Edit More</a> or <a href='petpage.phtml?pet=$petname'>View Page</a>";
+
+
+include("layout/footer.txt");?>

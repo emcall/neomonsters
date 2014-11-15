@@ -1,0 +1,12 @@
+<?php include("layout/header.txt"); 
+	$link = connecttodb();
+	$petname = $_GET['pet'];
+	
+	$query = "UPDATE accounts
+	SET activepet = '$petname'
+	WHERE uid = '$uid';";
+	$result = mysqli_query($link, $query) or die("FATAL ERROR: " . mysqli_error($link));
+	$_SESSION['activepet'] = $petname;
+	echo "You just made $petname your active pet!";
+	include("layout/footer.txt");
+?>

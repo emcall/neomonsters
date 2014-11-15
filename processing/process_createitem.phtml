@@ -1,0 +1,32 @@
+<?php include("layout/header.txt");
+
+	$link = connecttodb();
+	$itemcat = $_POST['itemcat'];
+	if($itemcat == NULL){
+		echo "you need to select a category";
+		die();
+		}
+	$recipient = $_POST['user'];
+	if($itemcat == "paintbrush"){
+		$itemname = $_POST['pname'];
+		}
+	else if($itemcat == "morphpot"){
+		$itemname = $_POST['mname'];
+		}
+		
+	//get user id from username
+	
+	$add_item = "INSERT INTO items VALUES (
+						NULL,
+						8,
+						'$itemname',
+						'inventory',
+						'$itemcat',
+						0);";
+	
+	mysqli_query($link, $add_item) or die("FATAL ERROR: " . mysqli_error($link));
+						
+	echo "You just gave $recipient a(n) $itemname";
+
+include("layout/footer.txt");
+?>

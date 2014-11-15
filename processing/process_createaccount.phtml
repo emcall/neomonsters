@@ -1,0 +1,78 @@
+<title>Account Creation</title>
+<?php
+	
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+
+	//get all the data
+	$username = $_POST['username'];
+	$email = $_POST['email'];
+	$gender = $_POST['gender'];
+	$realname = $_POST['realname'];
+	$pass1 = $_POST['pass1'];
+	$pass2 = $_POST['pass2'];
+	$verify = $_POST['verify'];
+
+	//make sure it's all there (gender/realname are optional; verify will be checked later)
+	if($username == NULL){
+		echo "Please enter a username.";
+		die();
+		}
+		
+	if($email == NULL){
+		echo "Please enter an email address.";
+		die();
+		}
+
+	if($pass1 == NULL|| $pass2 == NULL){
+		echo "Please enter a password.";
+		die();
+		}
+
+		
+	//check for invalid passwords
+
+	if(preg_match('/[^0-9A-Za-z ]/', $username)){
+		echo "The username you entered contains invalid characters. Names can only have letters, numbers, spaces, and periods.";
+		die();
+		}
+	if(preg_match('/[^0-9A-Za-z ]/', $realname)){
+		echo "The name you entered contains invalid characters. Names can only have letters, numbers, spaces, and periods.";
+		die();
+		}
+	if(preg_match('/[^0-9A-Za-z.@]/', $email)){
+		echo "$email isn't a valid email address.....";
+		die();
+		}
+		
+	//need to check password for valid characters! think of what to do here hmm. 
+	
+	
+	//check passwords match
+	if($pass1 != $pass2){
+		echo "Your passwords didn't match. Try again.";
+		die();
+		}
+	
+	//check verification code
+	if($verify != 'ckc'){
+		echo "Sorry, you are not one of the Chosen Ones.";
+		die();
+		}
+		
+		
+		
+	//check that name and email are unique
+	$query = "SELECT *
+			FROM accounts
+			WHERE uname = '$username'
+			OR email = '$email';";
+	$result = mysqli_query($link, $query) or die ("ERROR: Could not check username and email are unique." . mysqli_error($link));		
+	
+	if(mysqli_num_rows($result) != 0){
+		echo "Sorry, that name is taken, or $email has already been used to register.";
+		die();
+		}
+	
+	//have i checked everything....???????
+	//shove it in the database
+	//log 'em in too

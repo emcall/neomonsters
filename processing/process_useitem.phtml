@@ -1,0 +1,81 @@
+<?php
+session_start()?>
+<html><head><title>Use Item</title></head>
+<body>
+<?php
+	function connecttodb(){
+		$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+		if (mysqli_connect_errno($link)) {
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+		return $link;
+	}
+
+	$link = connecttodb();
+
+	$uid = $_SESSION['uid'];	
+
+
+	
+/*aight aight. what am i doin here.
+well i take in whatever was chosen. each one gets its own separate thingy.
+shouldn't be too hard. if it's moving the item just change where the item is located.
+other stuff like painting/morphing are p obvious.
+*/
+
+$id = $_POST['id'];
+$action = $_POST['useitem'];
+
+
+//get info
+	$request = "SELECT owner, name, category
+	FROM items
+	WHERE ID = '$id';";
+	$result = mysqli_fetch_array(mysqli_query($link, $request)) or die("FATAL ERROR: " . mysqli_error($link));
+	$owner = $result['owner'];
+	$category = $result['category'];
+	$itemname = $result['name'];
+
+//check and make sure the item really belongs to the person using it
+	if($uid != $owner){
+		echo "yo this aint yours";
+		die();
+	}
+	
+
+//move to gallery
+if($action == 'gallery'){
+	$query = "UPDATE items
+	SET location = 'gallery'
+	WHERE ID = '$id';";
+	$result = mysqli_query($link, $query) or die("FATAL ERROR: " . mysqli_error($link));
+	echo "You moved your thing to your gallery! neato.";
+	}
+
+//move to sdb
+else if($action == 'sdb'){	
+	"UPDATE items
+	SET location = 'sdb'
+	WHERE ID = '$id';";
+	echo "You moved the thing to your SDB, woah.";
+	}
+	
+//move to shop
+//set item price to 0
+else if($action == 'shop'){
+	echo "you're puttin it in a shop";
+	}
+
+//destroy item
+else if($action == 'delete'){
+	echo "you're tryin to delete";
+	}
+
+//paint active pet
+else if($action == 'paintpet'){
+	//check and make sure it really is a paintbrush hehe
+	echo "you're tryin to paint a pet";
+	}
+?>
+
+

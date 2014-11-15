@@ -1,0 +1,72 @@
+<?php
+	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+		if (mysqli_connect_errno($link)) {
+			echo "Failed to connect to MySQL: " . mysqli_connect_error();
+		}
+
+$id = $_GET['id'];
+
+//select owner, name, category from items
+$request = "SELECT owner, name, category
+	FROM items
+	WHERE ID = '$id';";
+	$result = mysqli_fetch_array(mysqli_query($link, $request)) or die("FATAL ERROR: " . mysqli_error($link));
+
+$owner = $result['owner'];
+$category = $result['category'];
+$itemname = $result['name'];
+
+//plug into category, get everything
+$request = "SELECT *
+	FROM $category
+	WHERE name = '$itemname';";
+$itemdata = mysqli_fetch_array(mysqli_query($link, $request)) or die("FATAL ERROR: " . mysqli_error($link));
+$imgurl = $itemdata['imgurl'];
+$rarity = $itemdata['rarity'];
+$value = $itemdata['value'];
+$description = $itemdata['description'];
+
+echo "<img src= " . $imgurl . " /><br/> Item: $itemname <br/>Rarity: $rarity <br/>Resale Value: $value <br> $description <br/>";
+
+
+/* DISPLAY OPTIONS */
+
+		echo "<form action ='process_useitem.phtml' method ='post'>";
+		echo "<select name='useitem'>";
+		
+		if ($category == "paintbrush"){
+			//for paintbrushes, give option to paint activepet
+			echo "<option value='paintpet'>Paint Active Pet</option>\n";
+		}
+		//for morphing potions, option to use on active pet
+		if($category == "morphpot"){
+			//for paintbrushes, give option to paint activepet
+			echo "<option value='morphpet'>Morph Active Pet</option>\n";
+		}
+				
+		//for collectible, get theme, because probably i want that????
+		//move item to gallery
+		echo "<option value='gallery'>Place in Gallery</option>\n";
+		
+		//move item to safety deposit box
+		echo "<option value='sdb'>Place in SDB</option>\n";
+		
+		//move item to shop
+		echo "<option value='shop'>Place in shop</option>\n";
+		
+		//destroy item
+		echo "<option value='delete'>Discard</option>\n";
+		//close dropdown, make submit button
+		echo "</select>\n";
+		
+		
+		//add in the item id, were gonna want that
+		echo "<input type=hidden name=id value=$id />";
+		
+		echo "<input type='submit' /></form>\n";
+
+
+
+
+
+?>

@@ -1,0 +1,52 @@
+<?php include("layout/header.txt"); 
+	//get the name of the desired user
+	$player = $_GET['user'];
+	
+	//if user is blank
+	//TODO put search box in
+	if($player == NULL){
+		echo "um who are you looking for";
+		include("layout/footer.txt");
+		die();
+	}
+
+	//header
+	echo "Viewing User Profile: $player";
+	
+	//connect to database
+	$link = connecttodb();
+	
+	//fetch data
+	$request = "SELECT uid, urank, joindate
+		FROM accounts
+			WHERE uname = '$player';";
+	$result = mysqli_fetch_array(mysqli_query($link, $request)) or die("FATAL ERROR: " . mysqli_error($link));
+	
+	$player_rank = $result['urank'];
+	$player_joined = date( "M d, Y", strtotime($result['joindate'])); 
+	
+	echo "\n<br />Joined: $player_joined";
+	echo "\n<br />Rank: $player_rank";
+	echo "\n<br />Right now this is the only stuff in the user table haha";
+	
+	echo "\n<br />User's Pets: <br/>";
+	
+		$pets = array();
+	$i = 0;
+	$query = "SELECT *
+	FROM pets
+	WHERE owner = '$uid'
+	ORDER BY rank;";
+	$q_result = mysqli_query($link, $query) or die("ERROR: GETPETS: Could not access database " . mysqli_error($link));
+	while($line = mysqli_fetch_array($q_result, MYSQLI_ASSOC)){
+		$pets[$i] = $line;
+		$i++;
+		}
+	foreach($pets as $value){
+		$petname = $value['name'];
+		$species = $value['species'];
+		$color = $value['color'];
+		echo "\n<br />$petname the  $color $species";
+	}
+	include("layout/footer.txt");
+?>
