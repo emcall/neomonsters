@@ -1,10 +1,10 @@
 <?php
-	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	$link = mysqli_connect(/*CREDENTIALS*/);
 	if (mysqli_connect_errno($link)) {
 		echo "Failed to connect to MySQL: " . mysqli_connect_error();
 	}
-	
-	
+
+
 	//get input
 	$name = $_POST['name'];
 	$rarity = $_POST['rarity'];
@@ -19,10 +19,10 @@
 		echo "Please fill in all fields, thanks.";
 		die();
 		}
-		
+
 	//make sure theres nothing gross in the inputs
 	//also could be more efficient i bet but. effort. v.v
-	
+
 	//an stands for "alphanumeric" btw. If you were wondering.
 	$an_name = trim(preg_replace("[^A-Za-z0-9_.!?,;\s]", "", $name));
 	$an_rarity = trim(preg_replace("[^0-9]", "", $rarity));
@@ -50,10 +50,10 @@
 		echo "Hey. Yo. what did I say about invalid characters??? YOU COULD HAVE BROKEN THE SITE. Good thing I checked! Feel bad about yourself and proofread next time. $an_value != $value";
 		die();
 		}
-	
-	
 
-	
+
+
+
 	$request = "INSERT INTO food
 		VALUES (
 		'$an_name',
@@ -63,10 +63,10 @@
 		'$an_imgurl',
 		'NULL',
 		'$theme');";
-		
-	
+
+
 	$result = mysqli_query($link, $request) or die("Error adding $name: " . mysqli_error($link));
-	
+
 	echo "Yay you did it. Here's your thing: <img src=$an_umgurl> $an_name, $an_rarity, $an_value, $an_description, $theme";
-	
+
 ?>

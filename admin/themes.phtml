@@ -1,5 +1,5 @@
 <h2>Item Theme</h2>
-Every item is put in a "theme" that makes it part of a larger set. Examples of themes: spooky foods, reject plushies, faerie books, rainbow plushies, etc. The name of the theme should be one word with no spaces or capitals. Themes span all 'collectible' item types, so any theme you make here will become available for all items added in the future. 
+Every item is put in a "theme" that makes it part of a larger set. Examples of themes: spooky foods, reject plushies, faerie books, rainbow plushies, etc. The name of the theme should be one word with no spaces or capitals. Themes span all 'collectible' item types, so any theme you make here will become available for all items added in the future.
 
 
 <br><br>Add new theme:
@@ -13,11 +13,11 @@ Every item is put in a "theme" that makes it part of a larger set. Examples of t
 <form action="scripts/deletetheme.phtml" method="post">
 <select name="plushtheme">
 <?php
-	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	$link = mysqli_connect(/*CREDENTIALS*/);
 	if (mysqli_connect_errno($link)) {
 		echo "Failed to connect to MySQL: " . mysqli_connect_error();
 	}
-	
+
 	$request = "SELECT name
 		FROM themes
 		ORDER BY name;";

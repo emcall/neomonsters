@@ -4,7 +4,7 @@ session_start()?>
 <body>
 <?php
 	function connecttodb(){
-		$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	$link = mysqli_connect(/* credentials */);
 		if (mysqli_connect_errno($link)) {
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 		}
@@ -13,21 +13,17 @@ session_start()?>
 
 	$link = connecttodb();
 
-	$uid = $_SESSION['uid'];	
+	$uid = $_SESSION['uid'];
 
 
-	
-/*aight aight. what am i doin here.
-well i take in whatever was chosen. each one gets its own separate thingy.
-shouldn't be too hard. if it's moving the item just change where the item is located.
-other stuff like painting/morphing are p obvious.
-*/
+
+/* Takes in the item id and the action taken */
 
 $id = $_POST['id'];
 $action = $_POST['useitem'];
 
 
-//get info
+//Fetch information on the item
 	$request = "SELECT owner, name, category
 	FROM items
 	WHERE ID = '$id';";
@@ -41,7 +37,7 @@ $action = $_POST['useitem'];
 		echo "yo this aint yours";
 		die();
 	}
-	
+
 
 //move to gallery
 if($action == 'gallery'){
@@ -53,13 +49,13 @@ if($action == 'gallery'){
 	}
 
 //move to sdb
-else if($action == 'sdb'){	
+else if($action == 'sdb'){
 	"UPDATE items
 	SET location = 'sdb'
 	WHERE ID = '$id';";
 	echo "You moved the thing to your SDB, woah.";
 	}
-	
+
 //move to shop
 //set item price to 0
 else if($action == 'shop'){
@@ -73,7 +69,7 @@ else if($action == 'delete'){
 
 //paint active pet
 else if($action == 'paintpet'){
-	//check and make sure it really is a paintbrush hehe
+	//check and make sure it really is a paintbrush
 	echo "you're tryin to paint a pet";
 	}
 ?>

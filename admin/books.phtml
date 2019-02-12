@@ -1,5 +1,5 @@
 <?php
-	$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+	$link = mysqli_connect(/*CREDENTIALS*/);
 	if (mysqli_connect_errno($link)) {
 		echo "Failed to connect to MySQL: " . mysqli_connect_error();
 	}
@@ -32,7 +32,7 @@ Image URL: <input type='text' name='imgurl'/>
 
 Species/Type:
 
-<select name="category"> 
+<select name="category">
 
 <option value='petpet'>Petpet</option>
 <option value='faerie'>Faerie</option>
@@ -41,15 +41,15 @@ Species/Type:
 <?php
 	$select_species = "SELECT s
 			FROM species
-			ORDER BY s; 
-			";		
+			ORDER BY s;
+			";
 		$select_species_result = mysqli_query($link, $select_species) or die ("FATAL ERROR! Could not retrieve species: " . mysqli_error($link));
 		while ($line = mysqli_fetch_array($select_species_result, MYSQL_ASSOC)) {
 			echo "<option value='$line[s]'>$line[s]</option>\n";
 		}
-		
+
 ?>
-</select>	
+</select>
 
 Theme:
 

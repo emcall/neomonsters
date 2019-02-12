@@ -1,7 +1,5 @@
 <?php	include("layout/header.txt");?>
 
-Mmh, I don't feel like finishing this at the moment. I need to figure out how to 
-
 This page will let you change the default options for creating a pet.
 <br>If the box is checked, that species or color will be available on the create-a-pet page.
 <form action="process_restrictions.phtml" method="post">
@@ -16,10 +14,10 @@ This page will let you change the default options for creating a pet.
 	//retrieve colors
 	$select_color = "SELECT c, r
 			FROM colors
-			ORDER BY c; 
-			";			
+			ORDER BY c;
+			";
 	$select_color_result = mysqli_query($link, $select_color) or die ("FATAL ERROR! Could not retrieve colors" . mysqli_error($link));
-	
+
 	//list all available colors
 	//colcount for table
 	$colcount = 0;
@@ -36,14 +34,14 @@ This page will let you change the default options for creating a pet.
 		echo "> $line[c] </td>";
 		$colcount++;
 		}
-	
+
 	//now, same thing for species.
 	$select_species = "SELECT s, restriction
 			FROM species
-			ORDER BY s; 
-			";			
+			ORDER BY s;
+			";
 	$select_species_result = mysqli_query($link, $select_species) or die ("FATAL ERROR! Could not retrieve species" . mysqli_error($link));
-	
+
 	//colcount for table
 	$colcount = 0;
 	while ($line = mysqli_fetch_array($select_species_result, MYSQL_ASSOC)) {
@@ -59,9 +57,9 @@ This page will let you change the default options for creating a pet.
 		echo "> $line[c] </td>";
 		$colcount++;
 		}
-	
-		
-	
+
+
+
 	?>
 </tr></table>
 	<input type="submit"/></form>

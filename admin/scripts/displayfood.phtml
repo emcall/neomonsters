@@ -7,17 +7,17 @@
 
 <?php
 
-		$link = mysqli_connect('','soundog_akrona','4dr1$N', 'soundog_neomonsters');
+$link = mysqli_connect(/*CREDENTIALS*/);
 		if (mysqli_connect_errno($link)) {
 			echo "Failed to connect to MySQL: " . mysqli_connect_error();
 			}
-			
+
 			$request = "SELECT *
 			FROM food;";
-			
+
 			$result = mysqli_query($link, $request) or die("ERROR: " . mysqli_error($link));
-			
-			
+
+
 			//too lazy to rename properly
 			while ($line = mysqli_fetch_array($result, MYSQLI_ASSOC)){
 				$name = $line['name'];
@@ -26,8 +26,8 @@
 				$description = $line['description'];
 				$imgurl = $line['imgurl'];
 				$theme = $line['theme'];
-				
-				
+
+
 				echo "<tr>
 						<td><img src=" . $imgurl . ">
 						<td>$name</td>
